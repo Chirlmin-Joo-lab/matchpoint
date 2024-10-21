@@ -22,16 +22,16 @@ project = 'MatchPoint'
 copyright = '2024 - Chirlmin Joo lab'
 author = 'Ivo Severins'
 
-from git import Repo
-from pathlib2 import Path
+# from git import Repo
+# from pathlib2 import Path
 # raise ValueError(Path(__file__).parent.parent)
-repo = Repo(Path(__file__).parent.parent.parent.parent)
+# repo = Repo(Path(__file__).parent.parent.parent.parent)
 
-sha = repo.head.object.hexsha
+# sha = repo.head.object.hexsha
 
 # The full version, including alpha/beta/rc tags
-release = f'develop-{sha[0:7]}'
-
+#  release = f'{sha[0:7]}'
+release = 1.0.0
 
 # -- General configuration ---------------------------------------------------
 
