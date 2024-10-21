@@ -1,2 +1,2 @@
 sphinx==5
-sphinx-book-theme==1
+sphinx-book-theme==1.1.3
