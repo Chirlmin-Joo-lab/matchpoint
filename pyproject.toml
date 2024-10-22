@@ -30,9 +30,10 @@ dependencies = [
 requires-python = ">=3.9"
 
 [project.urls]
-Homepage = "https://github.com/ivoseverins/matchpoint"
+Homepage = "https://github.com/Chirlmin-Joo-lab/matchpoint"
 
 [project.optional-dependencies]
+xarray = ["xarray==2023.1"]
 dev = ["pytest","pytest-datadir","build","twine","sphinx","sphinx-book-theme"]
 
 [tool.pytest.ini_options]
