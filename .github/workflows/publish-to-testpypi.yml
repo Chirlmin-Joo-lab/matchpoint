@@ -10,7 +10,7 @@ name: Publish to TestPyPi
 
 on:
   push:
-    branches: [ "master", "configure-workflows" ]
+    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
