@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "matchpoint"
-version = "1.0.0"
+version = "1.0.0.1"
 description = "Use methods and method chaining on lists of objects."
 readme = "README.md"
 authors = [{ name = "Ivo Severins", email = "i.w.h.severins@tudelft.nl" }]
