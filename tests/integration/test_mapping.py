@@ -127,15 +127,15 @@ def test_kernel_correlations():
     assert mapping.transformation_is_similar_to_correct_transformation(translation_error=1, rotation_error=0.001, scale_error=0.001)
 
 
-def test_save(shared_datadir):
+def test_save(tmp_path):
     mapping = MatchPoint.simulate()
-    mapping.save(shared_datadir / 'mapping' / 'test_mapping.nc')
+    mapping.save(tmp_path / 'test_mapping.nc')
     # mapping = MatchPoint.load(r'C:\Users\ivoseverins\Scan 123 - HJ general - Tile 1101.mapping')
     # mapping.save(r'C:\Users\ivoseverins\test.nc.mapping', filetype='nc')
     return mapping
 
 
-def test_load(shared_datadir):
-    mapping_saved = test_save(shared_datadir)
-    mapping_loaded = MatchPoint.load(shared_datadir / 'mapping' / 'test_mapping.nc')
+def test_load(tmp_path):
+    mapping_saved = test_save(tmp_path)
+    mapping_loaded = MatchPoint.load(tmp_path / 'test_mapping.nc')
     assert mapping_loaded == mapping_saved

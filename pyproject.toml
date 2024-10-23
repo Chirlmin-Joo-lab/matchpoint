@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "matchpoint"
-version = "1.0.0"
+version = "1.0.0.1"
 description = "Use methods and method chaining on lists of objects."
 readme = "README.md"
 authors = [{ name = "Ivo Severins", email = "i.w.h.severins@tudelft.nl" }]
@@ -30,9 +30,10 @@ dependencies = [
 requires-python = ">=3.9"
 
 [project.urls]
-Homepage = "https://github.com/ivoseverins/matchpoint"
+Homepage = "https://github.com/Chirlmin-Joo-lab/matchpoint"
 
 [project.optional-dependencies]
+xarray = ["xarray==2023.1"]
 dev = ["pytest","pytest-datadir","build","twine","sphinx","sphinx-book-theme"]
 
 [tool.pytest.ini_options]
