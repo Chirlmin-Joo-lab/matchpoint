@@ -1,12 +1,14 @@
 # pyproject.toml
 
 [build-system]
-requires      = ["setuptools>=61.0.0", "wheel"]
+requires      = ["setuptools>=61.0.0", "setuptools-scm>=8", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
 
 [project]
 name = "matchpoint"
-version = "1.0.0.1"
+dynamic = ["version"]
 description = "Use methods and method chaining on lists of objects."
 readme = "README.md"
 authors = [{ name = "Ivo Severins", email = "i.w.h.severins@tudelft.nl" }]
@@ -30,7 +32,8 @@ dependencies = [
 requires-python = ">=3.9"
 
 [project.urls]
-Homepage = "https://github.com/Chirlmin-Joo-lab/matchpoint"
+Documentation = "https://matchpoint.readthedocs.io/"
+Repository = "https://github.com/Chirlmin-Joo-lab/matchpoint"
 
 [project.optional-dependencies]
 xarray = ["xarray==2023.1"]
