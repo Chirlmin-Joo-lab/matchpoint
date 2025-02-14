@@ -183,8 +183,8 @@ class MatchPoint:
                 setattr(mapping, key, value.values)
 
         mapping.transform = cls.transformation_types[mapping.transformation_type]
-        mapping.transformation = mapping.transform(mapping.transformation)
-        mapping.transformation_inverse = mapping.transform(mapping.transformation_inverse)
+        mapping._transformation = mapping.transform(mapping.transformation)
+        mapping._transformation_inverse = mapping.transform(mapping.transformation_inverse)
         if hasattr(mapping, 'transformation_correct'):
             mapping.transformation_correct = mapping.transform(mapping.transformation_correct)
 
@@ -264,15 +264,12 @@ class MatchPoint:
 
         if transformation is None:
             self.transformation = self.transform()
-            self.transformation_inverse = self.transform()
         else:
             if type(transformation) is dict:
                 transformation = self.transform(**transformation)
             self.transformation = transformation
 
-            if transformation_inverse is None:
-                self.transformation_inverse = self.transform(matrix=self.transformation._inv_matrix)
-            else:
+            if transformation_inverse is not None:
                 if type(transformation_inverse) is dict:
                     transformation_inverse = self.transform(**transformation_inverse)
                 self.transformation_inverse = transformation_inverse
@@ -280,7 +277,7 @@ class MatchPoint:
 
     # Function to make attributes from transformation available from the MatchPoint class
     def __getattr__(self, item):
-        if ('transformation' in self.__dict__) and hasattr(self.transformation, item):
+        if hasattr(self.transformation, item):
             return getattr(self.transformation, item)
         else:
             super().__getattribute__(item)
@@ -307,6 +304,28 @@ class MatchPoint:
     # @property
     # def reflection(self):
     #     return np.array([np.sign(self.transformation[0, 0]), np.sign(self.transformation[1, 1])])
+
+    @property
+    @return_none_when_executed_by_pycharm
+    def transformation(self):
+        return self._transformation
+
+    @transformation.setter
+    def transformation(self, transformation):
+        self._transformation = transformation
+        if isinstance(transformation, skimage.transform._geometric.ProjectiveTransform):
+            self._transformation_inverse =  type(transformation)(matrix=transformation._inv_matrix)
+
+    @property
+    @return_none_when_executed_by_pycharm
+    def transformation_inverse(self):
+        return self._transformation_inverse
+
+    @transformation_inverse.setter
+    def transformation_inverse(self, transformation_inverse):
+        self._transformation_inverse = transformation_inverse
+        if isinstance(transformation_inverse, skimage.transform._geometric.ProjectiveTransform):
+            self._transformation =  type(transformation_inverse)(matrix=transformation_inverse._inv_matrix)
 
     @property
     @return_none_when_executed_by_pycharm
@@ -1101,7 +1120,6 @@ class MatchPoint:
         transformation, result = kernel_correlation(self.get_source(crop, space='destination'), self.get_destination(crop),
                                                     bounds, sigma, plot=plot, **kwargs)
         self.transformation = AffineTransform(matrix=(self.transformation + transformation).params)
-        self.transformation_inverse = type(self.transformation)(self.transformation._inv_matrix)
         self.mapping_statistics = {'kernel_correlation_value': result.fun}
 
     def kernel_correlation_score(self, sigma=1, crop=False, per_point_pair=False):
@@ -1190,7 +1208,6 @@ class MatchPoint:
 
         if self.transformation is None:
             self.transformation = AffineTransform()
-            self.transformation_inverse = AffineTransform()
 
         if plot and axes is None:
             figure, axes = plt.subplots(1, 4)
@@ -1238,7 +1255,6 @@ class MatchPoint:
             self.transformation = AffineTransform(matrix=(self.transformation + transformation).params)
         else:
             raise ValueError('Unkown correlation_space, use either "source" or "destination"')
-        self.transformation_inverse = AffineTransform(matrix=self.transformation._inv_matrix)
         self.correlation_conversion_function = None
 
     def geometric_hashing(self, method='one_by_one', tuple_size=4, maximum_distance_source=None,
@@ -1595,7 +1611,10 @@ class MatchPoint:
         ----
         This is only possible for linear transformations.
         """
-        self.transformation_inverse = type(self.transformation)(matrix=self.transformation._inv_matrix)
+        import warnings
+        warnings.warn('Inverse transformation is now calculated automatically when setting the transformation.', DeprecationWarning)
+        self._transformation_inverse = type(self.transformation)(matrix=self.transformation._inv_matrix)
+
 
     def transform_coordinates(self, coordinates, inverse=False, direction=None):
         """Transform coordinates using the object's transformation.
@@ -1830,6 +1849,8 @@ class MatchPoint:
             attributes = self.__dict__.copy()
             for key in list(attributes.keys()):
                 value = attributes[key]
+                if key[0] == '_':
+                    key = key[1:]
                 if type(value) in [str, int, float]:
                     continue
                 elif isinstance(value, skimage.transform._geometric.GeometricTransform):
@@ -1854,6 +1875,8 @@ class MatchPoint:
 
             for key in list(attributes.keys()):
                 value = attributes[key]
+                if key[0] == '_':
+                    key = key[1:]
                 if type(value) is str or np.issubdtype(type(value), np.number):
                     ds.attrs[key] = value
                 elif isinstance(value, skimage.transform._geometric.GeometricTransform):
