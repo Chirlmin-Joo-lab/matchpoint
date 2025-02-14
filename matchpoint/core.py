@@ -559,8 +559,9 @@ class MatchPoint:
 
     @source_distance_threshold.setter
     def source_distance_threshold(self, value):
-        self._source_distance_threshold = value
-        self._destination_distance_threshold = None
+        if value is not None:
+            self._source_distance_threshold = value
+            self._destination_distance_threshold = None
 
     @property
     @return_none_when_executed_by_pycharm
@@ -579,8 +580,9 @@ class MatchPoint:
 
     @destination_distance_threshold.setter
     def destination_distance_threshold(self, value):
-        self._source_distance_threshold = None
-        self._destination_distance_threshold = value
+        if value is not None:
+            self._source_distance_threshold = None
+            self._destination_distance_threshold = value
 
     def find_distance_threshold(self, method='single_match_optimization', **kwargs):
         """Find distance optimal distance threshold and automatically sets the destination distance threshold.
@@ -1293,7 +1295,6 @@ class MatchPoint:
             raise ValueError(f'Unknown method {method}')
 
         self.transformation = found_transformation
-        self.transformation_inverse = type(found_transformation)(matrix=self.transformation._inv_matrix)
 
 
     def get_unit(self, space):
