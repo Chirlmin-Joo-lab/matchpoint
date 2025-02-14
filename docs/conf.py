@@ -33,6 +33,9 @@ author = 'Ivo Severins'
 #  release = f'{sha[0:7]}'
 # release = '1.0.0'
 
+import matchpoint
+release = matchpoint.__version__
+
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be

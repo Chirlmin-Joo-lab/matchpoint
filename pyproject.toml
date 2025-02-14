@@ -5,11 +5,12 @@ requires      = ["setuptools>=61.0.0", "setuptools-scm>=8", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
+version_file = "matchpoint/_version.py"
 
 [project]
 name = "matchpoint"
 dynamic = ["version"]
-description = "Use methods and method chaining on lists of objects."
+description = "Package for performing point set registration."
 readme = "README.md"
 authors = [{ name = "Ivo Severins", email = "i.w.h.severins@tudelft.nl" }]
 classifiers = [
@@ -37,7 +38,7 @@ Repository = "https://github.com/Chirlmin-Joo-lab/matchpoint"
 
 [project.optional-dependencies]
 xarray = ["xarray==2023.1"]
-dev = ["pytest","pytest-datadir","build","twine","sphinx","sphinx-book-theme"]
+dev = ["pytest","pytest-datadir","build","twine","sphinx","sphinx-book-theme","setuptools_scm>=8"]
 
 [tool.pytest.ini_options]
 pythonpath = ["matchpoint/matchpoint"]
