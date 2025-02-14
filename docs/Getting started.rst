@@ -6,5 +6,5 @@ To start mapping import the MatchPoint library and create a :class:`.MatchPoint`
 .. code-block:: python
 
     import matchpoint as mp
-    reg = mp.MatchPoint
+    reg = mp.MatchPoint()
 

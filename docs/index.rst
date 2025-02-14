@@ -12,7 +12,7 @@ MatchPoint is a package for performing point set registration.
 Current functionality
 ---------------------
 
-Perform point set registation using:
+Perform point set registration using:
 
 MatchPoint class functionality:
  - Store source and destination point sets
