@@ -1920,6 +1920,10 @@ def compare_objects(object1, object2):
 
 
 def is_similar_transformation(transformation1, transformation2, translation_error, rotation_error, scale_error):
+    # TODO: After upgrading skimage, the following two lines can probably be removed
+    transformation1 = AffineTransform(transformation1.params)
+    transformation2 = AffineTransform(transformation2.params)
+
     translation_check = (np.abs(transformation1.translation - transformation2.translation) < translation_error).all()
     rotation_check = np.abs(transformation1.rotation - transformation2.rotation) < rotation_error
     scale_check = (np.abs(np.array(transformation1.scale) - np.array(transformation2.scale)) < scale_error).all()
