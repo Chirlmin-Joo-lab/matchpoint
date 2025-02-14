@@ -1282,19 +1282,24 @@ class MatchPoint:
             Keyword arguments to pass to the geometric hashing query function.
         """
         hash_table = GeometricHashTable([self.destination], source_vertices=self.source_vertices,
-                                        initial_source_transformation=self.transformation,
+                                        # initial_source_transformation=self.transformation,
                                         number_of_source_bases=20, number_of_destination_bases='all',
                                         tuple_size=tuple_size, maximum_distance_source=maximum_distance_source,
                                         maximum_distance_destination=maximum_distance_destination)
 
+        source = self.transformation(self.source)
+
         if method == 'one_by_one':
-            found_transformation = hash_table.query(self.source, **kwargs)
+            found_transformation = hash_table.query(source, **kwargs)
         elif method == 'abundant_transformations':
-            found_transformation = hash_table.query_tuple_transformations([self.source], **kwargs)
+            found_transformation = hash_table.query_tuple_transformations([source], **kwargs)
         else:
             raise ValueError(f'Unknown method {method}')
 
-        self.transformation = found_transformation
+        if found_transformation is not None:
+            self.transformation += found_transformation
+        else:
+            print('No transformation found')
 
 
     def get_unit(self, space):
@@ -1915,6 +1920,10 @@ def compare_objects(object1, object2):
 
 
 def is_similar_transformation(transformation1, transformation2, translation_error, rotation_error, scale_error):
+    # TODO: After upgrading skimage, the following two lines can probably be removed
+    transformation1 = AffineTransform(transformation1.params)
+    transformation2 = AffineTransform(transformation2.params)
+
     translation_check = (np.abs(transformation1.translation - transformation2.translation) < translation_error).all()
     rotation_check = np.abs(transformation1.rotation - transformation2.rotation) < rotation_error
     scale_check = (np.abs(np.array(transformation1.scale) - np.array(transformation2.scale)) < scale_error).all()
