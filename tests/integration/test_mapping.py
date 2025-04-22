@@ -143,5 +143,6 @@ def test_save(tmp_path):
 def test_load(tmp_path):
     mapping_saved = test_save(tmp_path)
     mapping_loaded = MatchPoint.load(tmp_path / 'test_mapping.nc')
+    assert mapping_loaded == mapping_saved
     mapping_loaded = MatchPoint.load(tmp_path / 'test_mapping.mapping')
     assert mapping_loaded == mapping_saved

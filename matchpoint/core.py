@@ -170,6 +170,8 @@ class MatchPoint:
             for key, value in attributes.items():
                 if type(value) == list:
                     value = np.array(value)
+                    if key == 'matched_pairs':
+                        value = value.reshape((0,2))
                 try:
                     setattr(mapping, key, value)
                 except AttributeError:
@@ -1916,7 +1918,7 @@ class MatchPoint:
         return is_similar_transformation(self.transformation, self.transformation_correct, **kwargs)
 
 
-def compare_objects(object1, object2):
+def compare_objects(object1, object2, verbose=False):
     for key1, value1 in object1.__dict__.items():
         if hasattr(object2, key1):
             if isinstance(value1, np.ndarray):
@@ -1929,6 +1931,8 @@ def compare_objects(object1, object2):
             is_equal = False
 
         if not is_equal:
+            if verbose:
+                print(key1, 'not equal')
             return False
     return True
 
