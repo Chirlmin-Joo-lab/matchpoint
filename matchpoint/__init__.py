@@ -6,5 +6,5 @@ except ImportError:
     try:
         import setuptools_scm
         __version__ = setuptools_scm.get_version(version_scheme="post-release")
-    except LookupError or ImportError:
+    except (LookupError, ImportError):
         __version__ = '0.0.0'
