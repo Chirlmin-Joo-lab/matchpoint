@@ -146,3 +146,16 @@ def test_load(tmp_path):
     assert mapping_loaded == mapping_saved
     mapping_loaded = MatchPoint.load(tmp_path / 'test_mapping.mapping')
     assert mapping_loaded == mapping_saved
+
+
+def test_save_and_load_with_pairs(tmp_path):
+    mapping = MatchPoint.simulate()
+    mapping.iterative_closest_point()
+    mapping.determine_matched_pairs(distance_threshold=5)
+    mapping.save(tmp_path / 'test_mapping.nc')
+    mapping_loaded = MatchPoint.load(tmp_path / 'test_mapping.nc')
+    assert mapping_loaded == mapping
+    mapping.save(tmp_path / 'test_mapping.mapping', filetype='yml')
+    mapping_loaded = MatchPoint.load(tmp_path / 'test_mapping.mapping')
+    assert mapping_loaded == mapping
+

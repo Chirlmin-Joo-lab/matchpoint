@@ -171,7 +171,7 @@ class MatchPoint:
                 if type(value) == list:
                     value = np.array(value)
                     if key == 'matched_pairs':
-                        value = value.reshape((0,2))
+                        value = value.reshape((-1,2))
                 try:
                     setattr(mapping, key, value)
                 except AttributeError:
