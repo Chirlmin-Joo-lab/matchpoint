@@ -133,10 +133,15 @@ def test_save(tmp_path):
     mapping.save(tmp_path / 'test_mapping.nc')
     # mapping = MatchPoint.load(r'C:\Users\ivoseverins\Scan 123 - HJ general - Tile 1101.mapping')
     # mapping.save(r'C:\Users\ivoseverins\test.nc.mapping', filetype='nc')
+    mapping.save(tmp_path / 'test_mapping', filetype='yml')
+    mapping.nearest_neighbour_match(transformation_type='polynomial')
+    mapping.save(tmp_path / 'test_mapping.nc')
+    mapping.save(tmp_path / 'test_mapping', filetype='yml')
     return mapping
 
 
 def test_load(tmp_path):
     mapping_saved = test_save(tmp_path)
     mapping_loaded = MatchPoint.load(tmp_path / 'test_mapping.nc')
+    mapping_loaded = MatchPoint.load(tmp_path / 'test_mapping.mapping')
     assert mapping_loaded == mapping_saved

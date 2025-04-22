@@ -134,6 +134,7 @@ class MatchPoint:
 
         mapping = SimulatedMatchPoint(source, destination)
         mapping.transformation_correct = transformation
+        mapping.transformation_correct_type = next((n for n, t in mapping.transformation_types.items() if t == type(transformation)), None)
 
         if show_correct:
             mapping.show_correct_mapping_transformation()
@@ -186,7 +187,7 @@ class MatchPoint:
         mapping._transformation = mapping.transform(mapping.transformation)
         mapping._transformation_inverse = mapping.transform(mapping.transformation_inverse)
         if hasattr(mapping, 'transformation_correct'):
-            mapping.transformation_correct = mapping.transform(mapping.transformation_correct)
+            mapping.transformation_correct = mapping.transformation_types[mapping.transformation_correct_type](mapping.transformation_correct)
 
         mapping.name = filepath.with_suffix('').name
         mapping.save_path = filepath.parent
@@ -1865,8 +1866,6 @@ class MatchPoint:
             attributes = self.__dict__.copy()
             for key in list(attributes.keys()):
                 value = attributes[key]
-                if key[0] == '_':
-                    key = key[1:]
                 if type(value) in [str, int, float]:
                     continue
                 elif isinstance(value, skimage.transform._geometric.GeometricTransform):
@@ -1876,6 +1875,8 @@ class MatchPoint:
                     attributes[key] = value.tolist()
                 else:
                     attributes.pop(key)
+
+            attributes = {key if not (key[0] == '_') else key[1:]: value for key,value in attributes.items()}
 
             if filetype in ['yml','yaml']:
                 with filepath.with_suffix('.mapping').open('w') as yml_file:
@@ -1896,7 +1897,10 @@ class MatchPoint:
                 if type(value) is str or np.issubdtype(type(value), np.number):
                     ds.attrs[key] = value
                 elif isinstance(value, skimage.transform._geometric.GeometricTransform):
-                    ds[key] = (('transformation_dim_0', 'transformation_dim_1'), value.params)
+                    if isinstance(value, PolynomialTransform) or isinstance(value, skimage.transform._geometric.PolynomialTransform):
+                        ds[key] = (('transformation_polynomial_dim_0', 'transformation_polynomial_dim_1'), value.params)
+                    else:
+                        ds[key] = (('transformation_matrix_dim_0', 'transformation_matrix_dim_1'), value.params)
                 elif type(value).__module__ == np.__name__:
                     if key in ['source', 'destination', 'matched_pairs']:
                         ds[key] = ((key + '_index', 'dimension'), value.reshape(-1,2))
