@@ -279,34 +279,44 @@ class MatchPoint:
 
 
     # Function to make attributes from transformation available from the MatchPoint class
-    def __getattr__(self, item):
-        if hasattr(self.transformation, item):
-            return getattr(self.transformation, item)
-        else:
-            super().__getattribute__(item)
+    # The current implementation gave errors when used in parallel processing, perhaps due to problems with pickling and unpickling.
+    # def __getattr__(self, item):
+    #     if hasattr(self, 'transformation') and hasattr(self.transformation, item):
+    #         return getattr(self.transformation, item)
+    #     else:
+    #         return super().__getattribute__(item)
 
     def __eq__(self, other):
         return compare_objects(self, other) and compare_objects(other, self)
 
-    # @property
-    # def translation(self):
-    #     return self.transformation[0:2,2]
-    #
-    # @property
-    # @return_none_when_executed_by_pycharm
-    # def magnification(self):
-    #     return np.linalg.norm(self.transformation[:,0:2],axis=0)
-    #
-    # @property
-    # @return_none_when_executed_by_pycharm
-    # def rotation(self):
-    #     # rotation_matrix = self.transformation[0:2, 0:2]/self.magnification[0]
-    #     # return np.arctan2(rotation_matrix[0,1]-rotation_matrix[1,0],rotation_matrix[0,0]+rotation_matrix[1,1])/(2*np.pi)*360
-    #     return np.arctan2(self.transformation[0, 1], self.transformation[0, 0]) / (2 * np.pi) * 360
-    #
+    @property
+    @return_none_when_executed_by_pycharm
+    def translation(self):
+        return self.transformation.translation
+        # return self.transformation[0:2,2]
+
+    @property
+    @return_none_when_executed_by_pycharm
+    def scale(self):
+        return self.transformation.scale
+        # return np.linalg.norm(self.transformation[:,0:2],axis=0)
+
+    @property
+    @return_none_when_executed_by_pycharm
+    def rotation(self):
+        return self.transformation.rotation
+        # rotation_matrix = self.transformation[0:2, 0:2]/self.magnification[0]
+        # return np.arctan2(rotation_matrix[0,1]-rotation_matrix[1,0],rotation_matrix[0,0]+rotation_matrix[1,1])/(2*np.pi)*360
+        # return np.arctan2(self.transformation[0, 1], self.transformation[0, 0]) / (2 * np.pi) * 360
+
+    @property
+    @return_none_when_executed_by_pycharm
+    def shear(self):
+        return self.transformation.shear
+
     # @property
     # def reflection(self):
-    #     return np.array([np.sign(self.transformation[0, 0]), np.sign(self.transformation[1, 1])])
+        # return np.array([np.sign(self.transformation[0, 0]), np.sign(self.transformation[1, 1])])
 
     @property
     @return_none_when_executed_by_pycharm
