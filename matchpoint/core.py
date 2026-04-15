@@ -1883,7 +1883,7 @@ class MatchPoint:
                 value = attributes[key]
                 if type(value) in [str, int, float]:
                     continue
-                elif isinstance(value, skimage.transform._geometric.GeometricTransform):
+                elif isinstance(value, skimage.transform._geometric._GeometricTransform):
                     attributes[key] = value.params.tolist()
 #TODO: solve issue with nonlinear mapping.transformation_type, which spits out a tuple of two arrays (4x4) instead np.shape(value.params.tolist())== (2, 15)
                 elif type(value).__module__ == np.__name__:
@@ -1911,7 +1911,7 @@ class MatchPoint:
                     key = key[1:]
                 if type(value) is str or np.issubdtype(type(value), np.number):
                     ds.attrs[key] = value
-                elif isinstance(value, skimage.transform._geometric.GeometricTransform):
+                elif isinstance(value, skimage.transform._geometric._GeometricTransform):
                     if isinstance(value, PolynomialTransform) or isinstance(value, skimage.transform._geometric.PolynomialTransform):
                         ds[key] = (('transformation_polynomial_dim_0', 'transformation_polynomial_dim_1'), value.params)
                     else:
@@ -1936,7 +1936,7 @@ def compare_objects(object1, object2, verbose=False):
         if hasattr(object2, key1):
             if isinstance(value1, np.ndarray):
                 is_equal = np.all(value1 == getattr(object2, key1))
-            elif isinstance(value1, skimage.transform._geometric.GeometricTransform):
+            elif isinstance(value1, skimage.transform._geometric._GeometricTransform):
                 is_equal = np.all(value1.params == getattr(object2, key1).params)
             else:
                 is_equal = value1 == getattr(object2, key1)

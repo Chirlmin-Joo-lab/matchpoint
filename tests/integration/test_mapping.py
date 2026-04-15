@@ -89,7 +89,7 @@ def test_geometric_hashing():
     translation = np.array([256, 10])
     rotation = 125 / 360 * 2 * np.pi
     scale = np.array([10, -10])
-    transformation = SimilarityTransform(translation=translation, rotation=rotation, scale=scale)
+    transformation = AffineTransform(translation=translation, rotation=rotation, scale=scale)
     mapping = MatchPoint.simulate(number_of_points=200, transformation=transformation,
                                 bounds=([0, 0], [256, 512]), crop_bounds=((50, 200), None), fraction_missing=(0.1, 0.1),
                                 error_sigma=(0.5, 0.5), shuffle=True, seed=10252, show_correct=False)
