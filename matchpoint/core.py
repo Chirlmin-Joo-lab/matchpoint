@@ -1061,7 +1061,7 @@ class MatchPoint:
         print(f'Nearest-neighbour match\n'
               f'Mean-squared error: {error}')
 
-    def iterative_closest_point(self, distance_threshold=None, **kwargs):
+    def iterative_closest_point(self, distance_threshold=None, verbose=True, **kwargs):
         """Find transformation from source to destination points using an iterative closest point algorithm
 
         In the iterative closest point algorithm, the two-way nearest neighbours are found and these are used to
@@ -1092,11 +1092,12 @@ class MatchPoint:
 
         self.transformation, self.transformation_inverse, error, number_of_iterations = \
             icp(self.source, self.destination, distance_threshold_final=distance_threshold,
-                initial_transformation=self.transformation, transform_final=self.transform, **kwargs)
+                initial_transformation=self.transformation, transform_final=self.transform, verbose=verbose, **kwargs)
 
-        print(f'Iterative closest point match\n'
-              f'Mean-squared error: {error}\n'
-              f'Number of iterations: {number_of_iterations}')
+        if verbose:
+            print(f'Iterative closest point match\n'
+                  f'Mean-squared error: {error}\n'
+                  f'Number of iterations: {number_of_iterations}')
 
     def kernel_correlation(self, bounds=((0.97, 1.02), (-0.05, 0.05), (-10, 10), (-10, 10)), sigma=1, crop=False,
                            plot=False, **kwargs):
@@ -1304,6 +1305,8 @@ class MatchPoint:
         kwargs
             Keyword arguments to pass to the geometric hashing query function.
         """
+        # TODO: The maximum_distance_source is apparently after transformation, this could be confusing.
+        #  Either document this well, or change it.
         hash_table = GeometricHashTable([self.destination], source_vertices=self.source_vertices,
                                         # initial_source_transformation=self.transformation,
                                         number_of_source_bases=20, number_of_destination_bases='all',

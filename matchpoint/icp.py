@@ -157,7 +157,7 @@ def show_point_connections(pointset1, pointset2, axis=None):
     # axis.autoscale()
 
 def icp(source, destination, max_iterations=20, tolerance=0.001, distance_threshold=None, distance_threshold_final=None,
-        initial_transformation=None, transform=AffineTransform, transform_final=None, show_plot=False, **kwargs):
+        initial_transformation=None, transform=AffineTransform, transform_final=None, show_plot=False, verbose=True, **kwargs):
     """Iterative closest point algorithm for mapping a source point set on a destination point set.
 
     Parameters
@@ -236,7 +236,8 @@ def icp(source, destination, max_iterations=20, tolerance=0.001, distance_thresh
             plot.append_data(current_transformation(source), destination, source_indices, destination_indices, error,
                              title=f'Iteration {i}')
 
-        print(f'Iteration: {i} \t Mean squared error: {error} \t Number of pairs: {len(source_indices)}')
+        if verbose:
+            print(f'Iteration: {i} \t Mean squared error: {error} \t Number of pairs: {len(source_indices)}')
 
         if np.abs(previous_error - error) < tolerance:
             break
@@ -247,7 +248,8 @@ def icp(source, destination, max_iterations=20, tolerance=0.001, distance_thresh
         nearest_neighbour_match(source, destination, transform_final, current_transformation, distance_threshold_final,
                                 return_inverse=True, **kwargs)
 
-    print(f'Final \t\t Mean squared error: {error} \t Number of pairs: {len(source_indices)}')
+    if verbose:
+        print(f'Final \t\t Mean squared error: {error} \t Number of pairs: {len(source_indices)}')
 
     if show_plot:
         plot.append_data(transformation_final(source), destination, source_indices, destination_indices, error,
