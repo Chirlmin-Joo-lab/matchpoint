@@ -1,7 +1,7 @@
 import warnings
 import numpy as np
 import math
-from skimage.transform._geometric import GeometricTransform
+from skimage.transform._geometric import _GeometricTransform
 
 # from skimage.transform._geometric import PolynomialTransform
 #
@@ -15,8 +15,14 @@ from skimage.transform._geometric import GeometricTransform
 #         coords = coords.astype(float)
 #         return super().__call__(coords)
 
-class PolynomialTransform(GeometricTransform):
-    def __init__(self, params=None):
+class PolynomialTransform(_GeometricTransform):
+    def __init__(self, params=None, dimensionality=None):
+        if dimensionality is None:
+            dimensionality = 2
+        elif dimensionality != 2:
+            raise NotImplementedError(
+                'Polynomial transforms are only implemented for 2D.'
+            )
         if params is None:
             # default to transformation which preserves original coordinates
             params = np.array([[0, 1, 0], [0, 0, 1]])
@@ -38,7 +44,10 @@ class PolynomialTransform(GeometricTransform):
         # warn on rank reduction, which indicates an ill conditioned matrix
         if rank != len(coeff):
             msg = "Estimation may be poorly conditioned"
-            warnings.warn(msg, np.RankWarning, stacklevel=4)
+            if int(np.__version__[0]) == 1:
+                warnings.warn(msg, np.RankWarning, stacklevel=4)
+            else:
+                warnings.warn(msg, np.exceptions.RankWarning, stacklevel=4)
 
         self.params = coeff.T
         # print(rank)
@@ -52,3 +61,16 @@ class PolynomialTransform(GeometricTransform):
         # A = np.vstack([coords[:, 0] ** i * coords[:, 1] ** j for i in range(order + 1) for j in range(order + 1)]).T
         A = np.vstack([coords[:, 0] ** (j - i) * coords[:, 1] ** i for j in range(order + 1) for i in range(j + 1)]).T
         return A@self.params.T
+
+    @property
+    def inverse(self):
+        raise NotImplementedError(
+            'There is no explicit way to do the inverse polynomial '
+            'transformation. Instead, estimate the inverse transformation '
+            'parameters by exchanging source and destination coordinates,'
+            'then apply the forward transformation.'
+        )
+
+    @classmethod
+    def identity(cls, dimensionality=None):
+        return cls(params=None, dimensionality=dimensionality)

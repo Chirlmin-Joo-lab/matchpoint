@@ -1,8 +1,8 @@
 import numpy as np
-from skimage.transform._geometric import GeometricTransform
+from skimage.transform._geometric import _GeometricTransform
 
 # If you can think of a better name ... PolynomialTransform2 possibly
-class PolywarpTransform(GeometricTransform):
+class PolywarpTransform(_GeometricTransform):
     # TODO: Update docstrings
     """2D polynomial transformation.
 
@@ -25,7 +25,14 @@ class PolywarpTransform(GeometricTransform):
 
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params=None, dimensionality=None):
+        if dimensionality is None:
+            dimensionality = 2
+        elif dimensionality != 2:
+            raise NotImplementedError(
+                'Polynomial transforms are only implemented for 2D.'
+            )
+
         if params is None:
             # default to transformation which preserves original coordinates
             params = (np.array([[0, 0], [1, 0]]), np.array([[0, 1], [0, 0]]))
@@ -152,13 +159,34 @@ class PolywarpTransform(GeometricTransform):
 
         return dst
 
-    def inverse(self, coords):
-        raise Exception(
+    @classmethod
+    def identity(cls, dimensionality=None):
+        """Identity transform
+        Parameters
+        ----------
+        dimensionality : {None, 2}, optional
+            This transform only allows dimensionality of 2, where None
+            corresponds to 2. The parameter exists for compatibility with other
+            transforms.
+        Returns
+        -------
+        tform : transform
+            Transform such that ``np.all(tform(pts) == pts)``.
+        """
+        return cls(params=None, dimensionality=dimensionality)
+
+    @property
+    def inverse(self):
+        raise NotImplementedError(
             'There is no explicit way to do the inverse polynomial '
             'transformation. Instead, estimate the inverse transformation '
             'parameters by exchanging source and destination coordinates,'
-            'then apply the forward transformation.')
+            'then apply the forward transformation.'
+        )
 
+    @classmethod
+    def identity(cls, dimensionality=None):
+        return cls(params=None, dimensionality=dimensionality)
 
 
 # Original code source: Trey Wenger - August 2015
