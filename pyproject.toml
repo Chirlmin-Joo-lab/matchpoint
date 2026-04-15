@@ -20,7 +20,7 @@ classifiers = [
 ]
 keywords = ["point set", "registration", "iterative closest point", "kernel correlation", "cross-correlation", "geometric hashing"]
 dependencies = [
-    "numpy >= 1.23",
+    "numpy >= 1.22",
 	"matplotlib >= 3.5",
 	"pathlib2",
 	"pyyaml>=6.0",
